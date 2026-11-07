@@ -6,6 +6,19 @@ const { validateEvent, validateRegistration } = require('./middlewares/validate'
 
 // Criar um novo evento
 router.post('/events', validateEvent, async (req, res) => {
+  /*
+    #swagger.tags = ['Eventos']
+    #swagger.description = 'Cria um novo evento.'
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'Dados do evento a ser criado.',
+      required: true,
+      schema: { $ref: '#/definitions/EventInput' }
+    }
+    #swagger.responses[201] = { description: 'Evento criado com sucesso.' }
+    #swagger.responses[400] = { description: 'Dados inválidos.' }
+    #swagger.responses[500] = { description: 'Erro interno ao criar o evento.' }
+  */
   try {
     const { title, date, capacity } = req.body;
     const event = await Event.create({ title, date, capacity });
@@ -18,6 +31,12 @@ router.post('/events', validateEvent, async (req, res) => {
 
 // Listar eventos com a contagem de inscrições atuais
 router.get('/events', async (req, res) => {
+  /*
+    #swagger.tags = ['Eventos']
+    #swagger.description = 'Lista todos os eventos com a contagem de inscrições atuais.'
+    #swagger.responses[200] = { description: 'Lista de eventos.' }
+    #swagger.responses[500] = { description: 'Erro interno ao listar os eventos.' }
+  */
   try {
     const events = await Event.findAll({
       attributes: {
@@ -40,6 +59,22 @@ router.get('/events', async (req, res) => {
 
 // Registrar um participante em um evento
 router.post('/events/:id/register', validateRegistration, async (req, res) => {
+  /*
+    #swagger.tags = ['Inscrições']
+    #swagger.description = 'Inscreve um participante em um evento, respeitando a capacidade máxima.'
+    #swagger.parameters['id'] = { in: 'path', description: 'ID do evento.', required: true, type: 'integer' }
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'Dados do participante.',
+      required: true,
+      schema: { $ref: '#/definitions/RegistrationInput' }
+    }
+    #swagger.responses[201] = { description: 'Inscrição realizada com sucesso.' }
+    #swagger.responses[400] = { description: 'Dados inválidos.' }
+    #swagger.responses[403] = { description: 'Evento lotado.' }
+    #swagger.responses[404] = { description: 'Evento não encontrado.' }
+    #swagger.responses[500] = { description: 'Erro interno ao registrar participante.' }
+  */
   try {
     // a. Busca o evento pelo ID
     const event = await Event.findByPk(req.params.id);
